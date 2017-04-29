@@ -49,7 +49,7 @@ System.prototype._collisions = function () {
 
 System.prototype._spliceDeadParticles = function () {
     for (var i = 0; i < this.particles.length; i++) {
-        var part = this.particles[j];
+        var part = this.particles[i];
         if (part.isToDie) {
             part.mesh.parent.remove(part.mesh);
             this.particles.splice(i, 1);
