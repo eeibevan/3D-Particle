@@ -24,6 +24,40 @@ System.prototype.seed = function (n, meshes) {
     }
 };
 
+
+System.prototype._collisions = function () {
+    var particles  = this.particles;
+    var hasCollisionOccurred = false;
+
+    for (var i = 0; i < particles.length; i++) {
+        var part = particles[i];
+
+        for (var j = 0; j < particles.length; j++) {
+            if (j === i)
+                continue;
+
+            var other = particles[j];
+            if (part.isCollision(other)) {
+                part.collide(other);
+                hasCollisionOccurred = true;
+            }
+        }
+    }
+
+    return hasCollisionOccurred;
+};
+
+System.prototype._spliceDeadParticles = function () {
+    for (var i = 0; i < this.particles.length; i++) {
+        var part = this.particles[j];
+        if (part.isToDie) {
+            part.mesh.parent.remove(part.mesh);
+            this.particles.splice(i, 1);
+            i--;
+        }
+    }
+};
+
 System.prototype.tick = function () {
     for (var i = 0; i < this.particles.length; i++) {
         var part = this.particles[i];
@@ -45,5 +79,9 @@ System.prototype.tick = function () {
             part.dz *= -1;
             part.z += part.dz;
         }
+    }
+
+    if (this._collisions()) {
+        this._spliceDeadParticles();
     }
 };

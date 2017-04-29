@@ -6,7 +6,7 @@ $(document).ready(function () {
     const WIDTH = 100;
     const HEIGHT = 100;
     const DEPTH = 100;
-    const N = 1000;
+    const N = 10;
 
     init();
     animate();
