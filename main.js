@@ -1,11 +1,12 @@
 $(document).ready(function () {
     var container;
     var camera, controls, scene, renderer;
-    var particles = [];
+
+    var sys;
     const WIDTH = 100;
     const HEIGHT = 100;
     const DEPTH = 100;
-    const N = 10;
+    const N = 1000;
 
     init();
     animate();
@@ -21,9 +22,9 @@ $(document).ready(function () {
 
     function addCtrls() {
         controls = new THREE.TrackballControls( camera );
-        controls.rotateSpeed = 1.0;
+        controls.rotateSpeed = 10;
         controls.zoomSpeed = 10;
-        controls.panSpeed = 0.8;
+        controls.panSpeed = 10;
         controls.noZoom = false;
         controls.noPan = false;
         controls.staticMoving = true;
@@ -32,6 +33,9 @@ $(document).ready(function () {
 
     function mkGe() {
         var geometry = new THREE.SphereGeometry( 5, 5, 5 );
+
+        var color = new THREE.Color();
+        applyVertexColors(geometry, color.setHex(Math.random() * 0xffffff ));
 
         var material =  new THREE.MeshPhongMaterial({
             color: 0xffffff,
@@ -44,12 +48,13 @@ $(document).ready(function () {
     }
 
     function addGeom() {
+        var particles = [];
         for (var i = 0; i < N; i ++) {
             var add = mkGe();
             particles.push(add);
             scene.add(add);
         }
-
+        return particles;
     }
 
     function init() {
@@ -67,7 +72,10 @@ $(document).ready(function () {
         light.position.set( 0, 0, DEPTH + 500 );
         scene.add( light );
 
-        addGeom();
+        var meshes = addGeom();
+
+        sys = new System(-WIDTH, -HEIGHT, -DEPTH, WIDTH, HEIGHT, DEPTH, N, meshes);
+
         addCtrls();
 
         var gridHelper = new THREE.GridHelper( DEPTH * 2, 40, 0x0000ff, 0x808080 );
@@ -85,34 +93,11 @@ $(document).ready(function () {
 
     function animate() {
         requestAnimationFrame( animate );
+        sys.tick();
+        for (var i = 0; i < sys.particles.length; i++) {
+            var part = sys.particles[i];
 
-        for (var i = 0; i < particles.length; i++) {
-            var part = particles[i];
-            scene.updateMatrixWorld();
-            var position  = new THREE.Vector3();
-            position.setFromMatrixPosition(part.matrixWorld);
-
-            //part.geometry.computeBoundingSphere();
-            //var position = part.geometry.boundingSphere.center;
-
-            //part.mesh.position.x += part.dx;
-            part.translateX(1);
-            if (position.x > WIDTH || position.x < -WIDTH) {
-                //part.dx *= -1;
-                part.position.set(0, position.y, position.z);
-            }
-
-            part.translateY(1);
-            if (position.y > HEIGHT || position.y < -HEIGHT) {
-                //part.dy *= -1;
-                part.position.set(position.x,0,position.z);
-            }
-
-            part.translateZ(1);
-            if (position.z > DEPTH || position.z < -DEPTH) {
-                //part.dz *= -1;
-                part.position.set(position.x,position.y,0);
-            }
+            part.mesh.position.set(part.x, part.y, part.z)
         }
         controls.update();
         renderer.render( scene, camera );
