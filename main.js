@@ -2,10 +2,10 @@ $(document).ready(function () {
     var container;
     var camera, controls, scene, renderer;
     var particles = [];
-    const WIDTH = 5000;
-    const HEIGHT = 25;
-    const DEPTH = 5000;
-    const N = 50;
+    const WIDTH = 100;
+    const HEIGHT = 100;
+    const DEPTH = 100;
+    const N = 10;
 
     init();
     animate();
@@ -22,7 +22,7 @@ $(document).ready(function () {
     function addCtrls() {
         controls = new THREE.TrackballControls( camera );
         controls.rotateSpeed = 1.0;
-        controls.zoomSpeed = 1.2;
+        controls.zoomSpeed = 10;
         controls.panSpeed = 0.8;
         controls.noZoom = false;
         controls.noPan = false;
@@ -30,46 +30,26 @@ $(document).ready(function () {
         controls.dynamicDampingFactor = 0.3;
     }
 
-    function addGeom() {
-        var geometry = new THREE.Geometry();
-        var defaultMaterial = new THREE.MeshPhongMaterial({
+    function mkGe() {
+        var geometry = new THREE.SphereGeometry( 5, 5, 5 );
+
+        var material =  new THREE.MeshPhongMaterial({
             color: 0xffffff,
             shading: THREE.FlatShading,
             vertexColors: THREE.VertexColors, shininess: 0
         });
+        var sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(Math.random() * 100 + 10, Math.random() * 100 + 10, Math.random() * 100 + 10);
+        return sphere;
+    }
 
-        var geom = new THREE.SphereGeometry(5, 5, 5);
-        var matrix = new THREE.Matrix4();
-        var quaternion = new THREE.Quaternion();
-
+    function addGeom() {
         for (var i = 0; i < N; i ++) {
-            var position = new THREE.Vector3();
-            position.x = Math.random() * (WIDTH * 2) - WIDTH;
-            position.y = Math.random() * (HEIGHT * 2) - HEIGHT;
-            position.z = Math.random() * (DEPTH * 2) - DEPTH;
-
-            var rotation = new THREE.Euler();
-            rotation.x = Math.random() * 2 * Math.PI;
-            rotation.y = Math.random() * 2 * Math.PI;
-            rotation.z = Math.random() * 2 * Math.PI;
-
-            var scale = new THREE.Vector3();
-            var ns = Math.random() * 50 + 10;
-            scale.x = ns;
-            scale.y = ns;
-            scale.z = ns;
-
-            quaternion.setFromEuler( rotation, false );
-            matrix.compose( position, quaternion, scale );
-
-            var color = new THREE.Color();
-            applyVertexColors(geom, color.setHex(Math.random() * 0xffffff ));
-
-            geometry.merge(geom, matrix);
+            var add = mkGe();
+            particles.push(add);
+            scene.add(add);
         }
-        var drawnObject = new THREE.Mesh(geometry, defaultMaterial);
-        particles.push(drawnObject);
-        scene.add( drawnObject );
+
     }
 
     function init() {
@@ -105,11 +85,35 @@ $(document).ready(function () {
 
     function animate() {
         requestAnimationFrame( animate );
-        particles.forEach(function (part) {
-            part.translateX(Math.random() * 50);
-            part.translateY(Math.random() * 50);
-            part.translateZ(Math.random() * 50);
-        });
+
+        for (var i = 0; i < particles.length; i++) {
+            var part = particles[i];
+            scene.updateMatrixWorld();
+            var position  = new THREE.Vector3();
+            position.setFromMatrixPosition(part.matrixWorld);
+
+            //part.geometry.computeBoundingSphere();
+            //var position = part.geometry.boundingSphere.center;
+
+            //part.mesh.position.x += part.dx;
+            part.translateX(1);
+            if (position.x > WIDTH || position.x < -WIDTH) {
+                //part.dx *= -1;
+                part.position.set(0, position.y, position.z);
+            }
+
+            part.translateY(1);
+            if (position.y > HEIGHT || position.y < -HEIGHT) {
+                //part.dy *= -1;
+                part.position.set(position.x,0,position.z);
+            }
+
+            part.translateZ(1);
+            if (position.z > DEPTH || position.z < -DEPTH) {
+                //part.dz *= -1;
+                part.position.set(position.x,position.y,0);
+            }
+        }
         controls.update();
         renderer.render( scene, camera );
     }
