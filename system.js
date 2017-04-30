@@ -11,6 +11,7 @@ function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes, meshProvider) {
 
     this.particles = [];
 
+    this.startN = n;
     this.seed(n, meshes);
 }
 
@@ -106,5 +107,13 @@ System.prototype.tick = function () {
 
     if (this._collisions()) {
         this._spliceMarkedParticles();
+    }
+
+    if (this.particles.length/this.startN < .1 ) {
+        // Seed In 25% of The Original Number
+        var newN = Math.floor(this.startN * .25);
+        for (var j = 0; j < newN; j++) {
+            this._makeParticle();
+        }
     }
 };
