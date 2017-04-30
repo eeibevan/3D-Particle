@@ -68,6 +68,7 @@ System.prototype._spliceMarkedParticles = function () {
             var mk = Math.floor(part.radius / 10);
             for (; mk > 0; mk--)
                 this._makeParticle(part.x, part.y, part.z);
+            part.isToDie = true;
         }
 
         if (part.isToDie) {
