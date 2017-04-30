@@ -70,6 +70,10 @@ $(document).ready(function () {
 
             part.mesh.position.set(part.x, part.y, part.z)
         }
+
+        // Slight Rotation
+        camera.translateX(10);
+
         controls.update();
         renderer.render( scene, camera );
     }
