@@ -1,4 +1,4 @@
-function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes) {
+function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes, meshProvider) {
     this.minX = minX;
     this.minY = minY;
     this.minZ = minZ;
@@ -7,10 +7,22 @@ function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes) {
     this.maxY = maxY;
     this.maxZ = maxZ;
 
+    this._meshProvider = meshProvider;
+
     this.particles = [];
 
     this.seed(n, meshes);
 }
+
+System.prototype._makeParticle = function (x, y, z) {
+    var radius = Math.ceil(Math.random() * 2);
+    var nx = x || rndInt(this.minX, this.maxX);
+    var ny = y || rndInt(this.minY, this.maxY);
+    var nz = z || rndInt(this.minZ, this.maxZ);
+    var part  = new Particle(radius, nx, ny, nz);
+    this._meshProvider.makeAndAttach(part);
+    this.particles.push(part);
+};
 
 System.prototype.seed = function (n, meshes) {
     for (var i = 0; i < n; i++) {
@@ -20,6 +32,7 @@ System.prototype.seed = function (n, meshes) {
         var z = rndInt(this.minZ, this.maxZ);
         var np = new Particle(radius, x, y, z);
         np.mesh = meshes[i];
+        np.mesh.scale.set(radius, radius, radius);
         this.particles.push(np);
     }
 };
@@ -47,9 +60,16 @@ System.prototype._collisions = function () {
     return hasCollisionOccurred;
 };
 
-System.prototype._spliceDeadParticles = function () {
+System.prototype._spliceMarkedParticles = function () {
     for (var i = 0; i < this.particles.length; i++) {
         var part = this.particles[i];
+
+        if (part.isToBurst) {
+            var mk = Math.floor(part.radius / 10);
+            for (; mk > 0; mk--)
+                this._makeParticle(part.x, part.y, part.z);
+        }
+
         if (part.isToDie) {
             part.mesh.parent.remove(part.mesh);
             this.particles.splice(i, 1);
@@ -79,9 +99,11 @@ System.prototype.tick = function () {
             part.dz *= -1;
             part.z += part.dz;
         }
+
+        part.tick();
     }
 
     if (this._collisions()) {
-        this._spliceDeadParticles();
+        this._spliceMarkedParticles();
     }
 };

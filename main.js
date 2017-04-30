@@ -74,7 +74,14 @@ $(document).ready(function () {
 
         var meshes = addGeom();
 
-        sys = new System(-WIDTH, -HEIGHT, -DEPTH, WIDTH, HEIGHT, DEPTH, N, meshes);
+        var geometry = new THREE.SphereGeometry( 5, 5, 5 );
+        var material =  new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            shading: THREE.FlatShading,
+            vertexColors: THREE.VertexColors, shininess: 0
+        });
+        var meshProvider = new MeshProvider(scene, material);
+        sys = new System(-WIDTH, -HEIGHT, -DEPTH, WIDTH, HEIGHT, DEPTH, N, meshes, meshProvider);
 
         addCtrls();
 
