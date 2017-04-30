@@ -31,7 +31,7 @@ $(document).ready(function () {
         camera.position.z = DEPTH;
 
         scene = new THREE.Scene();
-        scene.add(new THREE.AmbientLight(0x555555));
+        scene.add(new THREE.AmbientLight(0xffffff));
 
         var light = new THREE.SpotLight( 0xffffff, 1.5 );
         light.position.set( 0, 0, DEPTH + 500 );
