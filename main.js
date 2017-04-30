@@ -3,10 +3,10 @@ $(document).ready(function () {
     var camera, controls, scene, renderer;
 
     var sys;
-    const WIDTH = 100;
-    const HEIGHT = 100;
-    const DEPTH = 100;
-    const N = 10;
+    const WIDTH = 1000;
+    const HEIGHT = 1000;
+    const DEPTH = 1000;
+    const N = 500;
 
     init();
     animate();

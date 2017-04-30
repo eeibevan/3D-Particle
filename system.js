@@ -15,7 +15,7 @@ function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes, meshProvider) {
 }
 
 System.prototype._makeParticle = function (x, y, z) {
-    var radius = Math.ceil(Math.random() * 2);
+    var radius = Math.ceil(Math.random() * 5);
     var nx = x || rndInt(this.minX, this.maxX);
     var ny = y || rndInt(this.minY, this.maxY);
     var nz = z || rndInt(this.minZ, this.maxZ);
@@ -26,7 +26,7 @@ System.prototype._makeParticle = function (x, y, z) {
 
 System.prototype.seed = function (n, meshes) {
     for (var i = 0; i < n; i++) {
-        var radius = Math.ceil(Math.random() * 5);
+        var radius = Math.ceil(Math.random() * 6);
         var x = rndInt(this.minX, this.maxX);
         var y = rndInt(this.minY, this.maxY);
         var z = rndInt(this.minZ, this.maxZ);
@@ -65,7 +65,7 @@ System.prototype._spliceMarkedParticles = function () {
         var part = this.particles[i];
 
         if (part.isToBurst) {
-            var mk = Math.floor(part.radius / 10);
+            var mk = Math.floor(part.radius / 5);
             for (; mk > 0; mk--)
                 this._makeParticle(part.x, part.y, part.z);
             part.isToDie = true;
