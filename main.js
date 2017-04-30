@@ -11,15 +11,6 @@ $(document).ready(function () {
     init();
     animate();
 
-    function applyVertexColors(g, c) {
-        g.faces.forEach( function( f ) {
-            var n = ( f instanceof THREE.Face3 ) ? 3 : 4;
-            for( var j = 0; j < n; j ++ ) {
-                f.vertexColors[ j ] = c;
-            }
-        } );
-    }
-
     function addCtrls() {
         controls = new THREE.TrackballControls( camera );
         controls.rotateSpeed = 10;
@@ -29,32 +20,6 @@ $(document).ready(function () {
         controls.noPan = false;
         controls.staticMoving = true;
         controls.dynamicDampingFactor = 0.3;
-    }
-
-    function mkGe() {
-        var geometry = new THREE.SphereGeometry( 5, 5, 5 );
-
-        var color = new THREE.Color();
-        applyVertexColors(geometry, color.setHex(Math.random() * 0xffffff ));
-
-        var material =  new THREE.MeshPhongMaterial({
-            color: 0xffffff,
-            shading: THREE.FlatShading,
-            vertexColors: THREE.VertexColors, shininess: 0
-        });
-        var sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(Math.random() * 100 + 10, Math.random() * 100 + 10, Math.random() * 100 + 10);
-        return sphere;
-    }
-
-    function addGeom() {
-        var particles = [];
-        for (var i = 0; i < N; i ++) {
-            var add = mkGe();
-            particles.push(add);
-            scene.add(add);
-        }
-        return particles;
     }
 
     function init() {
@@ -72,16 +37,15 @@ $(document).ready(function () {
         light.position.set( 0, 0, DEPTH + 500 );
         scene.add( light );
 
-        var meshes = addGeom();
-
-        var geometry = new THREE.SphereGeometry( 5, 5, 5 );
         var material =  new THREE.MeshPhongMaterial({
             color: 0xffffff,
             shading: THREE.FlatShading,
-            vertexColors: THREE.VertexColors, shininess: 0
+            vertexColors: THREE.VertexColors,
+            shininess: 0
         });
+
         var meshProvider = new MeshProvider(scene, material);
-        sys = new System(-WIDTH, -HEIGHT, -DEPTH, WIDTH, HEIGHT, DEPTH, N, meshes, meshProvider);
+        sys = new System(-WIDTH, -HEIGHT, -DEPTH, WIDTH, HEIGHT, DEPTH, N, meshProvider);
 
         addCtrls();
 

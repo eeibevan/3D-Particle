@@ -1,4 +1,4 @@
-function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes, meshProvider) {
+function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshProvider) {
     this.minX = minX;
     this.minY = minY;
     this.minZ = minZ;
@@ -12,7 +12,7 @@ function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshes, meshProvider) {
     this.particles = [];
 
     this.startN = n;
-    this.seed(n, meshes);
+    this.seed(n);
 }
 
 System.prototype._makeParticle = function (x, y, z) {
@@ -25,16 +25,9 @@ System.prototype._makeParticle = function (x, y, z) {
     this.particles.push(part);
 };
 
-System.prototype.seed = function (n, meshes) {
+System.prototype.seed = function (n) {
     for (var i = 0; i < n; i++) {
-        var radius = Math.ceil(Math.random() * 6);
-        var x = rndInt(this.minX, this.maxX);
-        var y = rndInt(this.minY, this.maxY);
-        var z = rndInt(this.minZ, this.maxZ);
-        var np = new Particle(radius, x, y, z);
-        np.mesh = meshes[i];
-        np.mesh.scale.set(radius, radius, radius);
-        this.particles.push(np);
+        this._makeParticle();
     }
 };
 
