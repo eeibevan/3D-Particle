@@ -10,7 +10,20 @@
     <script src="particle.js"></script>
     <script src="meshProvider.js"></script>
     <script src="system.js"></script>
-    <script src="main.js"></script>
+    <script src="renderInteractor.js"></script>
+    <script>
+        const WIDTH = 1000;
+        const HEIGHT = 1000;
+        const DEPTH = 1000;
+        const N = 400;
+        var interactor;
+
+        $(document).ready(function () {
+            var container = document.getElementById("container");
+            interactor = new RendererInteractor(container, WIDTH, HEIGHT, DEPTH, N);
+        });
+
+    </script>
     <style>
         body {
             margin: 0;
