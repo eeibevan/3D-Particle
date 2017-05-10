@@ -26,8 +26,8 @@ $(document).ready(function () {
         container = document.getElementById( "container" );
 
         camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000000 );
-        camera.position.x = DEPTH;
-        camera.position.y = DEPTH;
+        camera.position.x = WIDTH;
+        camera.position.y = HEIGHT;
         camera.position.z = DEPTH;
 
         scene = new THREE.Scene();
