@@ -1,3 +1,32 @@
+/**
+ * A System For Simulating 3D Particle Movement And Interaction
+ *
+ * @param minX {number}
+ * The Lowest X In Which A Particle May Move
+ *
+ * @param minY {number}
+ * The Lowest Y In Which A Particle May Move
+ *
+ * @param minZ {number}
+ * The Lowest Z In Which A Particle May Move
+ *
+ * @param maxX {number}
+ * The Highest X In Which A Particle May Move
+ *
+ * @param maxY {number}
+ * The Highest Y In Which A Particle May Move
+ *
+ * @param maxZ {number}
+ * The Highest Z In Which A Particle May Move
+ *
+ * @param n {number}
+ * Number of Particles To Seed The System With
+ *
+ * @param meshProvider {MeshProvider}
+ * Object Which Provides Meshes Linked To A Scene
+ *
+ * @constructor
+ */
 function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshProvider) {
     this.minX = minX;
     this.minY = minY;
@@ -15,6 +44,21 @@ function System(minX, minY, minZ, maxX, maxY, maxZ, n, meshProvider) {
     this.seed(n);
 }
 
+/**
+ * Makes A Random Particle At x,y,z
+ * Or At A Random Location
+ *
+ * @param [x] {number}
+ * @default A Random Number Inside The System
+ *
+ * @param [y] {number}
+ * @default A Random Number Inside The System
+ *
+ * @param [z] {number}
+ * @default A Random Number Inside The System
+ *
+ * @private
+ */
 System.prototype._makeParticle = function (x, y, z) {
     var radius = Math.ceil(Math.random() * 5);
     var nx = x || rndInt(this.minX, this.maxX);
@@ -25,6 +69,12 @@ System.prototype._makeParticle = function (x, y, z) {
     this.particles.push(part);
 };
 
+/**
+ * Seeds n Random Particles Into The System
+ *
+ * @param n {number}
+ * Number of Particles To Create
+ */
 System.prototype.seed = function (n) {
     for (var i = 0; i < n; i++) {
         this._makeParticle();
@@ -32,6 +82,15 @@ System.prototype.seed = function (n) {
 };
 
 
+/**
+ * Tests And Runs Collision On Particles In The System
+ *
+ * @returns {boolean}
+ * True - If A Collision Occurred
+ * False Otherwise
+ *
+ * @private
+ */
 System.prototype._collisions = function () {
     var particles  = this.particles;
     var hasCollisionOccurred = false;
@@ -54,6 +113,10 @@ System.prototype._collisions = function () {
     return hasCollisionOccurred;
 };
 
+/**
+ * Burst / Remove Dead Particles In The System
+ * @private
+ */
 System.prototype._spliceMarkedParticles = function () {
     for (var i = 0; i < this.particles.length; i++) {
         var part = this.particles[i];
@@ -73,6 +136,10 @@ System.prototype._spliceMarkedParticles = function () {
     }
 };
 
+/**
+ * Advances The System Ahead By One Unit of Time
+ * Running Collisions, Movement, Bursts, etc..
+ */
 System.prototype.tick = function () {
     for (var i = 0; i < this.particles.length; i++) {
         var part = this.particles[i];

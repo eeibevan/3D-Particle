@@ -1,5 +1,40 @@
+/**
+ * An Interactor That Controls And Renders A 3d
+ * Particle System
+ *
+ * @param container
+ * The HTML Element That Will Contain The Canvas
+ * Should Probably Be Empty
+ *
+ * @param width
+ * The Maximum X Distance That A Particle May Travel
+ * In One Direction From The Origin of The System
+ *
+ * @param height
+ * The Maximum Y Distance That A Particle May Travel
+ * In One Direction From The Origin of The System
+ *
+ * @param depth
+ * The Maximum Z Distance That A Particle May Travel
+ * In One Direction From The Origin of The System
+ *
+ * @param n
+ * The Number of Particles To Initially Seed The System With
+ * If The Number of Particles Falls Significantly Below This
+ * Number, Then Some More Will Be Seeded In
+ *
+ * @constructor
+ */
 function RendererInteractor(container, width, height, depth, n) {
     this._container = container;
+
+    /**
+     * The Encompassed Particle System
+     * A Particle In This System Will Be Rendered
+     * Provided It Has An Associated Mesh
+     * @type {System}
+     * @private
+     */
     this._system = null;
 
     this.camera = null;
@@ -9,6 +44,17 @@ function RendererInteractor(container, width, height, depth, n) {
     this._init(width, height, depth, n);
 }
 
+/**
+ * Produces A PerspectiveCamera Starting At
+ * X,Y,Z
+ *
+ * @param x
+ * @param y
+ * @param z
+ *
+ * @returns {THREE.PerspectiveCamera}
+ * @private
+ */
 RendererInteractor.prototype._makeCamera = function (x, y, z) {
     var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000000);
     camera.position.x = x;
@@ -17,12 +63,27 @@ RendererInteractor.prototype._makeCamera = function (x, y, z) {
     return camera;
 };
 
-RendererInteractor.prototype._makeControls = function (camera) {
+/**
+ * Creates Trackball Controls Attached To The Given Camera
+ * Be Sure To Call update() On The Returned Controls, Otherwise
+ * They Will Have No Effect.
+ *
+ * @param camera {THREE.Camera}
+ * The Camera That Will Be Moved By The Controls
+ *
+ * @param [speed] {number}
+ * How Fast The Camera Moves
+ * @default 10 Units
+ *
+ * @returns {THREE.TrackballControls}
+ * @private
+ */
+RendererInteractor.prototype._makeControls = function (camera, speed) {
     var controls = new THREE.TrackballControls(camera);
 
-    controls.rotateSpeed = 10;
-    controls.zoomSpeed = 10;
-    controls.panSpeed = 10;
+    controls.rotateSpeed = speed || 10;
+    controls.zoomSpeed = speed || 10;
+    controls.panSpeed = speed || 10;
     controls.noZoom = false;
     controls.noPan = false;
     controls.staticMoving = true;
@@ -31,6 +92,28 @@ RendererInteractor.prototype._makeControls = function (camera) {
     return controls;
 };
 
+/**
+ * Initializes The Scene And Particle System
+ *
+ * @param width
+ * The Maximum X Distance That A Particle May Travel
+ * In One Direction From The Origin of The System
+ *
+ * @param height
+ * The Maximum Y Distance That A Particle May Travel
+ * In One Direction From The Origin of The System
+ *
+ * @param depth
+ * The Maximum Z Distance That A Particle May Travel
+ * In One Direction From The Origin of The System
+ *
+ * @param n
+ * The Number of Particles To Initially Seed The System With
+ * If The Number of Particles Falls Significantly Below This
+ * Number, Then Some More Will Be Seeded In
+ *
+ * @private
+ */
 RendererInteractor.prototype._init = function (width, height, depth, n) {
     this._scene = new THREE.Scene();
 
@@ -68,6 +151,9 @@ RendererInteractor.prototype._init = function (width, height, depth, n) {
     this.animate();
 };
 
+/**
+ * Renders A Tick of The Particle System
+ */
 RendererInteractor.prototype.animate = function () {
     requestAnimationFrame(this.animate.bind(this));
     this._system.tick();
