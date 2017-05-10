@@ -65,7 +65,7 @@ RendererInteractor.prototype._init = function (width, height, depth, n) {
 
     this._container.appendChild(this._renderer.domElement);
 
-    this.animate().bind(this);
+    this.animate();
 };
 
 RendererInteractor.prototype.animate = function () {
